@@ -1,0 +1,150 @@
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { UserBadge, AuthorBadge } from "./UserBadge";
+import { Heart, MessageSquare, CornerDownRight, Send } from "lucide-react";
+import type { Comment } from "@/lib/mockData";
+import { motion } from "framer-motion";
+
+interface CommentSectionProps {
+  comments: Comment[];
+}
+
+function CommentItem({ comment, depth = 0, isLast = false }: { comment: Comment; depth?: number; isLast?: boolean }) {
+  const [showReply, setShowReply] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [reactions, setReactions] = useState(comment.reactions);
+
+  const toggleReaction = (emoji: string) => {
+    setReactions(prev =>
+      prev.map(r =>
+        r.emoji === emoji
+          ? { ...r, count: r.reacted ? r.count - 1 : r.count + 1, reacted: !r.reacted }
+          : r
+      )
+    );
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: depth > 0 ? -8 : 0 }}
+      animate={{ opacity: 1, x: 0 }}
+      className={cn("relative", depth > 0 && "ml-8 pl-4 border-l-2 border-border")}
+    >
+      <div className="py-3">
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+            {comment.author.charAt(0)}
+          </div>
+          <span className="text-sm font-semibold text-foreground">{comment.author}</span>
+          <UserBadge level={comment.authorLevel} className="scale-90" />
+          {comment.isAuthor && <AuthorBadge />}
+          <span className="text-xs text-muted-foreground ml-auto">{comment.createdAt.split(" ")[1]}</span>
+        </div>
+        <p className="text-sm text-foreground/90 ml-9">{comment.content}</p>
+
+        {/* Reactions */}
+        <div className="ml-9 mt-2 flex flex-wrap items-center gap-1.5">
+          {reactions.map(r => (
+            <button
+              key={r.emoji}
+              onClick={() => toggleReaction(r.emoji)}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors",
+                r.reacted
+                  ? "border-primary/30 bg-primary/10 text-primary"
+                  : "border-border bg-muted/50 text-muted-foreground hover:border-primary/20"
+              )}
+            >
+              {r.emoji} {r.count}
+            </button>
+          ))}
+          <button className="rounded-full border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors">
+            +
+          </button>
+        </div>
+
+        {/* Actions */}
+        <div className="ml-9 mt-2 flex items-center gap-3">
+          <button
+            onClick={() => setShowReply(!showReply)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            <CornerDownRight className="h-3 w-3" /> 답글
+          </button>
+        </div>
+
+        {/* Reply input */}
+        {showReply && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            className="ml-9 mt-2"
+          >
+            <div className="flex items-center gap-2">
+              <input
+                value={replyText}
+                onChange={e => setReplyText(e.target.value)}
+                placeholder="답글을 입력하세요..."
+                className="flex-1 rounded-lg border bg-muted/30 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+              />
+              <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                <Send className="h-4 w-4" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
+      {!isLast && depth === 0 && <div className="border-b" />}
+    </motion.div>
+  );
+}
+
+export function CommentSection({ comments }: CommentSectionProps) {
+  const [newComment, setNewComment] = useState("");
+  const rootComments = comments.filter(c => !c.parentId);
+  const childComments = comments.filter(c => c.parentId);
+
+  return (
+    <div className="mt-6">
+      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-4">
+        <MessageSquare className="h-4 w-4 text-primary" />
+        댓글 {comments.length}개
+      </h3>
+
+      {/* Comment input */}
+      <div className="mb-4 flex items-start gap-2">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary mt-1">
+          김
+        </div>
+        <div className="flex-1">
+          <textarea
+            value={newComment}
+            onChange={e => setNewComment(e.target.value)}
+            placeholder="댓글을 입력하세요..."
+            rows={2}
+            className="w-full rounded-xl border bg-muted/30 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+          />
+          <div className="mt-2 flex justify-end">
+            <button className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+              등록
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Comments list */}
+      <div className="rounded-xl border bg-card">
+        {rootComments.map((comment, i) => (
+          <div key={comment.id}>
+            <CommentItem comment={comment} isLast={i === rootComments.length - 1 && childComments.filter(c => c.parentId === comment.id).length === 0} />
+            {childComments
+              .filter(c => c.parentId === comment.id)
+              .map(child => (
+                <CommentItem key={child.id} comment={child} depth={1} />
+              ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
