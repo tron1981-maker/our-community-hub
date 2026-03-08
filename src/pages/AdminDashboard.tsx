@@ -68,7 +68,7 @@ export default function AdminDashboard() {
     </div>;
   }
 
-  if (!isAdmin) return null;
+  if (!hasAccess) return null;
 
   const roleLabel: Record<string, string> = {
     unverified: "미인증",
