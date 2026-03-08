@@ -165,16 +165,28 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="px-3 py-4">
                 <div className="mb-4 rounded-xl bg-muted/50 p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <User className="h-5 w-5 text-primary" />
+                  {user ? (
+                    <>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                          <User className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || "사용자"}</p>
+                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "미인증"}</p>
+                        </div>
+                      </div>
+                      <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">로그인이 필요합니다</p>
+                      <Link to="/login" onClick={() => setSidebarOpen(false)}
+                        className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground">
+                        로그인
+                      </Link>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">김주민</p>
-                      <p className="text-xs text-muted-foreground">101동 1502호</p>
-                    </div>
-                  </div>
-                  <UserBadge level={1} />
+                  )}
                 </div>
                 <nav className="space-y-1">
                   {navItems.map(item => {
