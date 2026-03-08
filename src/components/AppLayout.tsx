@@ -1,11 +1,12 @@
 import { ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, MessageSquare, ShoppingBag, Megaphone, FileText,
-  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User
+  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserBadge } from "./UserBadge";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
