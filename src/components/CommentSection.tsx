@@ -242,7 +242,7 @@ export function CommentSection({ comments: initialComments }: CommentSectionProp
 
       {/* Comments list */}
       <div className="rounded-xl border bg-card">
-        {rootComments.map((comment, i) => {
+        {sortedRootComments.map((comment, i) => {
           const children = getChildren(comment.id);
           return (
             <div key={comment.id}>
