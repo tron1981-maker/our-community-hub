@@ -104,10 +104,31 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </div>
             {/* User area */}
             <div className="hidden items-center gap-2 sm:flex">
-              <UserBadge level={1} />
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                <User className="h-4 w-4 text-primary" />
-              </div>
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" className="rounded-lg p-2 hover:bg-muted" title="관리자">
+                      <Shield className="h-4 w-4 text-destructive" />
+                    </Link>
+                  )}
+                  <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
+                  <button onClick={signOut} className="rounded-lg p-2 hover:bg-muted" title="로그아웃">
+                    <LogOut className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+                    로그인
+                  </Link>
+                  <Link to="/signup" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                    회원가입
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
