@@ -56,7 +56,7 @@ export default function AdminDashboard() {
   const updateRole = async (userId: string, newRole: string) => {
     // Delete existing role and insert new one
     await supabase.from("user_roles").delete().eq("user_id", userId);
-    await supabase.from("user_roles").insert({ user_id: userId, role: newRole });
+    await supabase.from("user_roles").insert({ user_id: userId, role: newRole as any });
     fetchUsers();
   };
 
