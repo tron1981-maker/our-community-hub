@@ -21,12 +21,14 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [stats, setStats] = useState({ total: 0, verified: 0, unverified: 0 });
+  const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
+  const hasAccess = isAdmin || isDemoAdmin;
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
+    if (!loading && !hasAccess) {
       navigate("/admin/login");
     }
-  }, [loading, isAdmin, navigate]);
+  }, [loading, hasAccess, navigate]);
 
   useEffect(() => {
     if (isAdmin) fetchUsers();
