@@ -15,6 +15,7 @@ const navItems = [
   { path: "/board/free", label: "자유게시판", icon: MessageSquare },
   { path: "/board/market", label: "장터", icon: ShoppingBag },
   { path: "/board/complaint", label: "민원/건의", icon: FileText },
+  { path: "/polls", label: "투표", icon: Vote },
 ];
 
 const mockNotifications = [
