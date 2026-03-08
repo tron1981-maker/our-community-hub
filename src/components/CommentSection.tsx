@@ -187,10 +187,32 @@ export function CommentSection({ comments: initialComments }: CommentSectionProp
 
   return (
     <div className="mt-6">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-4">
-        <MessageSquare className="h-4 w-4 text-primary" />
-        댓글 {comments.length}개
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <MessageSquare className="h-4 w-4 text-primary" />
+          댓글 {comments.length}개
+        </h3>
+        <div className="flex rounded-lg border bg-muted/50 p-0.5 text-xs">
+          <button
+            onClick={() => setSortMode("popular")}
+            className={cn(
+              "rounded-md px-3 py-1 font-medium transition-colors",
+              sortMode === "popular" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            인기순
+          </button>
+          <button
+            onClick={() => setSortMode("latest")}
+            className={cn(
+              "rounded-md px-3 py-1 font-medium transition-colors",
+              sortMode === "latest" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            최신순
+          </button>
+        </div>
+      </div>
 
       {/* Comment input */}
       <div className="mb-4 flex items-start gap-2">
