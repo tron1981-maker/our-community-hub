@@ -23,6 +23,7 @@ export default function LoginPage() {
 
     // Demo login bypass
     if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      sessionStorage.setItem("demo_resident", "true");
       toast({ title: "데모 로그인 성공", description: "게스트로 접속합니다." });
       navigate("/");
       setLoading(false);
