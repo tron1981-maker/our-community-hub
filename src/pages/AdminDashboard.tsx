@@ -21,15 +21,17 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [stats, setStats] = useState({ total: 0, verified: 0, unverified: 0 });
+  const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
+  const hasAccess = isAdmin || isDemoAdmin;
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
+    if (!loading && !hasAccess) {
       navigate("/admin/login");
     }
-  }, [loading, isAdmin, navigate]);
+  }, [loading, hasAccess, navigate]);
 
   useEffect(() => {
-    if (isAdmin) fetchUsers();
+    if (hasAccess && isAdmin) fetchUsers();
   }, [isAdmin]);
 
   const fetchUsers = async () => {
@@ -66,7 +68,7 @@ export default function AdminDashboard() {
     </div>;
   }
 
-  if (!isAdmin) return null;
+  if (!hasAccess) return null;
 
   const roleLabel: Record<string, string> = {
     unverified: "미인증",
@@ -97,7 +99,11 @@ export default function AdminDashboard() {
             <Link to="/">
               <Button variant="ghost" size="sm"><Home className="h-4 w-4 mr-1" /> 주민 페이지</Button>
             </Link>
-            <Button variant="ghost" size="sm" onClick={signOut}>
+            <Button variant="ghost" size="sm" onClick={() => {
+              sessionStorage.removeItem("demo_admin");
+              signOut();
+              navigate("/admin/login");
+            }}>
               <LogOut className="h-4 w-4 mr-1" /> 로그아웃
             </Button>
           </div>

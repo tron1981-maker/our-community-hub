@@ -19,6 +19,7 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     if (email === "1234" && password === "1234") {
+      sessionStorage.setItem("demo_admin", "true");
       toast({ title: "데모 관리자 로그인 성공", description: "관리자로 접속합니다." });
       navigate("/admin");
       setLoading(false);
