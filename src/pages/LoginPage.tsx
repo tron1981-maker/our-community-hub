@@ -14,16 +14,26 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const DEMO_EMAIL = "1234";
+  const DEMO_PASSWORD = "1234";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // Demo login bypass
+    if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+      toast({ title: "데모 로그인 성공", description: "게스트로 접속합니다." });
+      navigate("/");
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast({ title: "로그인 실패", description: error.message, variant: "destructive" });
     } else {
-      // Check role to redirect
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: roleData } = await supabase.rpc("get_user_role", { _user_id: user.id });
