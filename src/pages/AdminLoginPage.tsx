@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
             <label className="text-sm font-medium text-foreground">관리자 이메일</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@complex.co.kr" className="pl-10" required />
+              <Input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@complex.co.kr" className="pl-10" required />
             </div>
           </div>
 
