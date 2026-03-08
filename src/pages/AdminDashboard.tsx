@@ -136,7 +136,7 @@ export default function AdminDashboard() {
           {[
             { label: "공지 작성", icon: Megaphone, path: "/board/notice" },
             { label: "민원 확인", icon: FileText, path: "/board/complaint" },
-            { label: "회원 관리", icon: Users, path: "#users" },
+            { label: "회원 관리", icon: Users, path: "/admin/members" },
             { label: "통계", icon: BarChart3, path: "#stats" },
           ].map(a => (
             <Link key={a.label} to={a.path}

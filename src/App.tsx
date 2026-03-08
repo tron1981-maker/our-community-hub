@@ -11,6 +11,10 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminMemberPage from "./pages/AdminMemberPage";
+import PollsPage from "./pages/PollsPage";
+import CreatePollPage from "./pages/CreatePollPage";
+import PollDetailPageRoute from "./pages/PollDetailPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +34,10 @@ const App = () => (
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/members" element={<AdminMemberPage />} />
+            <Route path="/polls" element={<PollsPage />} />
+            <Route path="/polls/create" element={<CreatePollPage />} />
+            <Route path="/polls/:pollId" element={<PollDetailPageRoute />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

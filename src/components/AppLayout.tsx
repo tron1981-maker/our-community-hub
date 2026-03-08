@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, MessageSquare, ShoppingBag, Megaphone, FileText,
-  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield
+  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield, Vote
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserBadge } from "./UserBadge";
@@ -15,6 +15,7 @@ const navItems = [
   { path: "/board/free", label: "자유게시판", icon: MessageSquare },
   { path: "/board/market", label: "장터", icon: ShoppingBag },
   { path: "/board/complaint", label: "민원/건의", icon: FileText },
+  { path: "/polls", label: "투표", icon: Vote },
 ];
 
 const mockNotifications = [
