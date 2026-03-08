@@ -27,8 +27,18 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut, isAdmin } = useAuth();
+  const isDemoResident = sessionStorage.getItem("demo_resident") === "true";
+  const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
+  const isLoggedIn = !!user || isDemoResident || isDemoAdmin;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+
+  const handleSignOut = () => {
+    sessionStorage.removeItem("demo_resident");
+    sessionStorage.removeItem("demo_admin");
+    signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,18 +114,23 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </div>
             {/* User area */}
             <div className="hidden items-center gap-2 sm:flex">
-              {user ? (
+              {isLoggedIn ? (
                 <>
-                  {isAdmin && (
+                  {(isAdmin || isDemoAdmin) && (
                     <Link to="/admin" className="rounded-lg p-2 hover:bg-muted" title="관리자">
                       <Shield className="h-4 w-4 text-destructive" />
                     </Link>
                   )}
                   <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <User className="h-4 w-4 text-primary" />
+                  <div className="flex items-center gap-1.5 rounded-lg px-2 py-1 hover:bg-muted cursor-pointer">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10">
+                      <User className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">
+                      {profile?.display_name || (isDemoResident ? "게스트" : isDemoAdmin ? "관리자" : "내정보")}
+                    </span>
                   </div>
-                  <button onClick={signOut} className="rounded-lg p-2 hover:bg-muted" title="로그아웃">
+                  <button onClick={handleSignOut} className="rounded-lg p-2 hover:bg-muted" title="로그아웃">
                     <LogOut className="h-4 w-4 text-muted-foreground" />
                   </button>
                 </>
@@ -165,15 +180,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="px-3 py-4">
                 <div className="mb-4 rounded-xl bg-muted/50 p-3">
-                  {user ? (
+                  {isLoggedIn ? (
                     <>
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                           <User className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || "사용자"}</p>
-                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "미인증"}</p>
+                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || (isDemoResident ? "게스트" : isDemoAdmin ? "관리자" : "사용자")}</p>
+                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "데모 계정"}</p>
                         </div>
                       </div>
                       <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
@@ -210,7 +225,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   })}
                 </nav>
                 <div className="mt-6 border-t pt-4 space-y-1">
-                  {isAdmin && (
+                  {(isAdmin || isDemoAdmin) && (
                     <Link to="/admin" onClick={() => setSidebarOpen(false)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-destructive hover:bg-muted">
                       <Shield className="h-4 w-4" /> 관리자 대시보드
@@ -219,8 +234,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                     <Settings className="h-4 w-4" /> 설정
                   </button>
-                  {user ? (
-                    <button onClick={() => { signOut(); setSidebarOpen(false); }}
+                  {isLoggedIn ? (
+                    <button onClick={() => { handleSignOut(); setSidebarOpen(false); }}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                       <LogOut className="h-4 w-4" /> 로그아웃
                     </button>
