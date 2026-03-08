@@ -25,6 +25,8 @@ const mockNotifications = [
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, role, signOut, isAdmin } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
