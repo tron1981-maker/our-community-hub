@@ -27,8 +27,18 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut, isAdmin } = useAuth();
+  const isDemoResident = sessionStorage.getItem("demo_resident") === "true";
+  const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
+  const isLoggedIn = !!user || isDemoResident || isDemoAdmin;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+
+  const handleSignOut = () => {
+    sessionStorage.removeItem("demo_resident");
+    sessionStorage.removeItem("demo_admin");
+    signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background">
