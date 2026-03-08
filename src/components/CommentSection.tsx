@@ -139,8 +139,17 @@ function CommentItem({
 export function CommentSection({ comments: initialComments }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState("");
+  const [sortMode, setSortMode] = useState<"popular" | "latest">("popular");
 
   const rootComments = comments.filter(c => !c.parentId);
+  const sortedRootComments = [...rootComments].sort((a, b) => {
+    if (sortMode === "popular") {
+      const aScore = a.reactions.reduce((sum, r) => sum + r.count, 0) + a.likes;
+      const bScore = b.reactions.reduce((sum, r) => sum + r.count, 0) + b.likes;
+      return bScore - aScore;
+    }
+    return b.id - a.id; // latest by id
+  });
   const getChildren = (parentId: number) => comments.filter(c => c.parentId === parentId);
 
   const nextId = () => Math.max(0, ...comments.map(c => c.id)) + 1;
