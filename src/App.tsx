@@ -11,6 +11,10 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminMemberPage from "./pages/AdminMemberPage";
+import PollsPage from "./pages/PollsPage";
+import CreatePollPage from "./pages/CreatePollPage";
+import PollDetailPageRoute from "./pages/PollDetailPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
