@@ -83,6 +83,11 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
+          <div className="rounded-lg border border-dashed border-destructive/30 bg-destructive/5 p-3 text-center text-xs text-muted-foreground">
+            <p className="font-medium mb-1">테스트 계정</p>
+            <p>이메일: <span className="font-mono font-semibold text-foreground">1234</span> / 비밀번호: <span className="font-mono font-semibold text-foreground">1234</span></p>
+          </div>
+
           <Button type="submit" variant="destructive" className="w-full" disabled={loading}>
             {loading ? "인증 중..." : "관리자 로그인"}
           </Button>
