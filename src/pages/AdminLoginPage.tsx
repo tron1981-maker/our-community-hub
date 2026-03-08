@@ -18,6 +18,13 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    if (email === "1234" && password === "1234") {
+      toast({ title: "데모 관리자 로그인 성공", description: "관리자로 접속합니다." });
+      navigate("/admin");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -26,7 +33,6 @@ export default function AdminLoginPage() {
       return;
     }
 
-    // Verify admin role server-side
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data: roleData } = await supabase.rpc("get_user_role", { _user_id: user.id });
@@ -65,7 +71,7 @@ export default function AdminLoginPage() {
             <label className="text-sm font-medium text-foreground">관리자 이메일</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@complex.co.kr" className="pl-10" required />
+              <Input type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@complex.co.kr" className="pl-10" required />
             </div>
           </div>
 
@@ -75,6 +81,11 @@ export default function AdminLoginPage() {
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="비밀번호 입력" className="pl-10" required />
             </div>
+          </div>
+
+          <div className="rounded-lg border border-dashed border-destructive/30 bg-destructive/5 p-3 text-center text-xs text-muted-foreground">
+            <p className="font-medium mb-1">테스트 계정</p>
+            <p>이메일: <span className="font-mono font-semibold text-foreground">1234</span> / 비밀번호: <span className="font-mono font-semibold text-foreground">1234</span></p>
           </div>
 
           <Button type="submit" variant="destructive" className="w-full" disabled={loading}>
