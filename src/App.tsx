@@ -34,6 +34,10 @@ const App = () => (
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/admin/login" element={<AdminLoginPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/members" element={<AdminMemberPage />} />
+            <Route path="/polls" element={<PollsPage />} />
+            <Route path="/polls/create" element={<CreatePollPage />} />
+            <Route path="/polls/:pollId" element={<PollDetailPageRoute />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

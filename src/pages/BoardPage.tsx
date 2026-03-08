@@ -2,7 +2,8 @@ import { useParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { PostCard } from "@/components/PostCard";
 import { getPostsByBoard } from "@/lib/mockData";
-import { Megaphone, MessageSquare, ShoppingBag, FileText, Plus, Search } from "lucide-react";
+import { BUILDINGS } from "@/lib/buildings";
+import { Megaphone, MessageSquare, ShoppingBag, FileText, Plus, Search, Filter } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
@@ -18,12 +19,16 @@ export default function BoardPage() {
   const config = boardConfig[boardType || "free"];
   const posts = getPostsByBoard(boardType || "free");
   const [search, setSearch] = useState("");
+  const [buildingFilter, setBuildingFilter] = useState("");
   const Icon = config?.icon || MessageSquare;
+  const isFreeBoard = boardType === "free";
 
-  const filtered = posts.filter(p =>
-    p.title.toLowerCase().includes(search.toLowerCase()) ||
-    p.content.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = posts.filter(p => {
+    const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
+      p.content.toLowerCase().includes(search.toLowerCase());
+    const matchBuilding = !buildingFilter || p.authorUnit.includes(buildingFilter.replace("동", ""));
+    return matchSearch && matchBuilding;
+  });
 
   return (
     <AppLayout>
@@ -46,15 +51,25 @@ export default function BoardPage() {
           )}
         </div>
 
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="검색어를 입력하세요..."
-            className="w-full rounded-xl border bg-card pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-card"
-          />
+        {/* Search + Filter */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="검색어를 입력하세요..."
+              className="w-full rounded-xl border bg-card pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-card"
+            />
+          </div>
+          {isFreeBoard && (
+            <select value={buildingFilter} onChange={e => setBuildingFilter(e.target.value)}
+              className="rounded-xl border bg-card px-3 py-2.5 text-sm text-foreground shadow-card">
+              <option value="">전체 동</option>
+              {BUILDINGS.map(b => <option key={b} value={b}>{b}</option>)}
+              <option value="my">내 동만 보기</option>
+            </select>
+          )}
         </div>
 
         {/* Posts */}
