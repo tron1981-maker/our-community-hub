@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, MessageSquare, ShoppingBag, Megaphone, FileText,
-  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield
+  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield, Vote
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserBadge } from "./UserBadge";
