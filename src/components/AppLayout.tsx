@@ -180,15 +180,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="px-3 py-4">
                 <div className="mb-4 rounded-xl bg-muted/50 p-3">
-                  {user ? (
+                  {isLoggedIn ? (
                     <>
                       <div className="flex items-center gap-2 mb-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                           <User className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || "사용자"}</p>
-                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "미인증"}</p>
+                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || (isDemoResident ? "게스트" : isDemoAdmin ? "관리자" : "사용자")}</p>
+                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "데모 계정"}</p>
                         </div>
                       </div>
                       <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
