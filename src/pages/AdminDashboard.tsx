@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   }, [loading, hasAccess, navigate]);
 
   useEffect(() => {
-    if (isAdmin) fetchUsers();
+    if (hasAccess && isAdmin) fetchUsers();
   }, [isAdmin]);
 
   const fetchUsers = async () => {
