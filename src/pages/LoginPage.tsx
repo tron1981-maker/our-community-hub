@@ -83,6 +83,11 @@ export default function LoginPage() {
             {loading ? "로그인 중..." : "로그인"}
           </Button>
 
+          <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/50 p-3 text-center text-xs text-muted-foreground">
+            <p className="font-medium mb-1">테스트 계정</p>
+            <p>이메일: <span className="font-mono font-semibold text-foreground">1234</span> / 비밀번호: <span className="font-mono font-semibold text-foreground">1234</span></p>
+          </div>
+
           <div className="flex justify-between text-sm">
             <Link to="/signup" className="text-primary hover:underline">회원가입</Link>
             <Link to="/admin/login" className="text-muted-foreground hover:text-foreground">관리자 로그인 →</Link>
