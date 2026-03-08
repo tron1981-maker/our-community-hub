@@ -139,8 +139,17 @@ function CommentItem({
 export function CommentSection({ comments: initialComments }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState("");
+  const [sortMode, setSortMode] = useState<"popular" | "latest">("popular");
 
   const rootComments = comments.filter(c => !c.parentId);
+  const sortedRootComments = [...rootComments].sort((a, b) => {
+    if (sortMode === "popular") {
+      const aScore = a.reactions.reduce((sum, r) => sum + r.count, 0) + a.likes;
+      const bScore = b.reactions.reduce((sum, r) => sum + r.count, 0) + b.likes;
+      return bScore - aScore;
+    }
+    return b.id - a.id; // latest by id
+  });
   const getChildren = (parentId: number) => comments.filter(c => c.parentId === parentId);
 
   const nextId = () => Math.max(0, ...comments.map(c => c.id)) + 1;
@@ -178,10 +187,32 @@ export function CommentSection({ comments: initialComments }: CommentSectionProp
 
   return (
     <div className="mt-6">
-      <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground mb-4">
-        <MessageSquare className="h-4 w-4 text-primary" />
-        댓글 {comments.length}개
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <MessageSquare className="h-4 w-4 text-primary" />
+          댓글 {comments.length}개
+        </h3>
+        <div className="flex rounded-lg border bg-muted/50 p-0.5 text-xs">
+          <button
+            onClick={() => setSortMode("popular")}
+            className={cn(
+              "rounded-md px-3 py-1 font-medium transition-colors",
+              sortMode === "popular" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            인기순
+          </button>
+          <button
+            onClick={() => setSortMode("latest")}
+            className={cn(
+              "rounded-md px-3 py-1 font-medium transition-colors",
+              sortMode === "latest" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            최신순
+          </button>
+        </div>
+      </div>
 
       {/* Comment input */}
       <div className="mb-4 flex items-start gap-2">
@@ -211,7 +242,7 @@ export function CommentSection({ comments: initialComments }: CommentSectionProp
 
       {/* Comments list */}
       <div className="rounded-xl border bg-card">
-        {rootComments.map((comment, i) => {
+        {sortedRootComments.map((comment, i) => {
           const children = getChildren(comment.id);
           return (
             <div key={comment.id}>
