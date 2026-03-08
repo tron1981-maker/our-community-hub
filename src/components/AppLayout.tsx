@@ -225,7 +225,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   })}
                 </nav>
                 <div className="mt-6 border-t pt-4 space-y-1">
-                  {isAdmin && (
+                  {(isAdmin || isDemoAdmin) && (
                     <Link to="/admin" onClick={() => setSidebarOpen(false)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-destructive hover:bg-muted">
                       <Shield className="h-4 w-4" /> 관리자 대시보드
@@ -234,8 +234,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                     <Settings className="h-4 w-4" /> 설정
                   </button>
-                  {user ? (
-                    <button onClick={() => { signOut(); setSidebarOpen(false); }}
+                  {isLoggedIn ? (
+                    <button onClick={() => { handleSignOut(); setSidebarOpen(false); }}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                       <LogOut className="h-4 w-4" /> 로그아웃
                     </button>
