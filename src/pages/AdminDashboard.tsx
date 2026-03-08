@@ -99,7 +99,11 @@ export default function AdminDashboard() {
             <Link to="/">
               <Button variant="ghost" size="sm"><Home className="h-4 w-4 mr-1" /> 주민 페이지</Button>
             </Link>
-            <Button variant="ghost" size="sm" onClick={signOut}>
+            <Button variant="ghost" size="sm" onClick={() => {
+              sessionStorage.removeItem("demo_admin");
+              signOut();
+              navigate("/admin/login");
+            }}>
               <LogOut className="h-4 w-4 mr-1" /> 로그아웃
             </Button>
           </div>
