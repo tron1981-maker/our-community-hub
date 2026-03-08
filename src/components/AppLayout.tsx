@@ -1,11 +1,12 @@
 import { ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Home, MessageSquare, ShoppingBag, Megaphone, FileText,
-  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User
+  Bell, Menu, X, ChevronRight, Building2, Settings, LogOut, User, Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserBadge } from "./UserBadge";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -24,6 +25,8 @@ const mockNotifications = [
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, profile, role, signOut, isAdmin } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -101,10 +104,31 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </div>
             {/* User area */}
             <div className="hidden items-center gap-2 sm:flex">
-              <UserBadge level={1} />
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                <User className="h-4 w-4 text-primary" />
-              </div>
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" className="rounded-lg p-2 hover:bg-muted" title="관리자">
+                      <Shield className="h-4 w-4 text-destructive" />
+                    </Link>
+                  )}
+                  <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+                    <User className="h-4 w-4 text-primary" />
+                  </div>
+                  <button onClick={signOut} className="rounded-lg p-2 hover:bg-muted" title="로그아웃">
+                    <LogOut className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <Link to="/login" className="rounded-lg px-3 py-1.5 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+                    로그인
+                  </Link>
+                  <Link to="/signup" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                    회원가입
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -141,16 +165,28 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </div>
               <div className="px-3 py-4">
                 <div className="mb-4 rounded-xl bg-muted/50 p-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <User className="h-5 w-5 text-primary" />
+                  {user ? (
+                    <>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                          <User className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{profile?.display_name || "사용자"}</p>
+                          <p className="text-xs text-muted-foreground">{profile?.unit_info || "미인증"}</p>
+                        </div>
+                      </div>
+                      <UserBadge level={role === "admin" ? 3 : role === "representative" ? 2 : role === "resident" ? 1 : 0} />
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">로그인이 필요합니다</p>
+                      <Link to="/login" onClick={() => setSidebarOpen(false)}
+                        className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground">
+                        로그인
+                      </Link>
                     </div>
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">김주민</p>
-                      <p className="text-xs text-muted-foreground">101동 1502호</p>
-                    </div>
-                  </div>
-                  <UserBadge level={1} />
+                  )}
                 </div>
                 <nav className="space-y-1">
                   {navItems.map(item => {
@@ -174,12 +210,26 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   })}
                 </nav>
                 <div className="mt-6 border-t pt-4 space-y-1">
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setSidebarOpen(false)}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-destructive hover:bg-muted">
+                      <Shield className="h-4 w-4" /> 관리자 대시보드
+                    </Link>
+                  )}
                   <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
                     <Settings className="h-4 w-4" /> 설정
                   </button>
-                  <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
-                    <LogOut className="h-4 w-4" /> 로그아웃
-                  </button>
+                  {user ? (
+                    <button onClick={() => { signOut(); setSidebarOpen(false); }}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted">
+                      <LogOut className="h-4 w-4" /> 로그아웃
+                    </button>
+                  ) : (
+                    <Link to="/login" onClick={() => setSidebarOpen(false)}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-primary hover:bg-muted">
+                      <User className="h-4 w-4" /> 로그인
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.aside>
