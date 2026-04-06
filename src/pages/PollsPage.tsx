@@ -24,7 +24,7 @@ export default function PollsPage() {
   const { user, role, isAdmin } = useAuth();
   const [polls, setPolls] = useState<Poll[]>([]);
   const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
-  const canCreate = isAdmin || isDemoAdmin || role === "representative";
+  const canCreate = isAdmin || isDemoAdmin || role === "representative" || role === "admin";
 
   useEffect(() => {
     fetchPolls();

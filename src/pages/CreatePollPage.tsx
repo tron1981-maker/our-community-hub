@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 export default function CreatePollPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isDemoAdmin = sessionStorage.getItem("demo_admin") === "true";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [options, setOptions] = useState(["", ""]);
@@ -40,19 +41,21 @@ export default function CreatePollPage() {
       toast({ title: "제목, 마감일, 최소 2개 선택지가 필요합니다.", variant: "destructive" });
       return;
     }
-    if (!user) {
+    if (!user && !isDemoAdmin) {
       toast({ title: "로그인이 필요합니다.", variant: "destructive" });
       return;
     }
 
     setSubmitting(true);
-    const { data: poll, error } = await supabase.from("polls").insert({
+    const pollData: Record<string, unknown> = {
       title: title.trim(),
       description: description.trim(),
-      created_by: user.id,
       end_date: new Date(endDate).toISOString(),
       target_buildings: selectedBuildings,
-    }).select().single();
+    };
+    if (user) pollData.created_by = user.id;
+
+    const { data: poll, error } = await supabase.from("polls").insert(pollData).select().single();
 
     if (error || !poll) {
       toast({ title: "투표 생성 실패", variant: "destructive" });
